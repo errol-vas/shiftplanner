@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"sync/atomic"
@@ -8,13 +9,18 @@ import (
 
 	"github.com/errol-vas/shiftplanner/internal/config"
 	"github.com/errol-vas/shiftplanner/internal/handlers"
+	"github.com/errol-vas/shiftplanner/internal/logger"
 )
 
 func main() {
 
 	// Load Config
 	cfg := config.Load()
-	log.Printf("Starting application in %s mode on port %s", cfg.Env, cfg.Port)
+
+	// Initialise Logger
+	logger.Init()
+
+	logger.Info(fmt.Sprintf("Starting application in %s mode", cfg.Env))
 
 	// Set server to healthy
 	atomic.StoreInt32(&handlers.Health, 1)
@@ -31,6 +37,6 @@ func main() {
 	}
 
 	// Start the Server
-	log.Printf("Starting server on port %s", cfg.Port)
+	logger.Info(fmt.Sprintf("Starting server on port %s", cfg.Port))
 	log.Fatal(server.ListenAndServe())
 }
