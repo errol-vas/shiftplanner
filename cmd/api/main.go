@@ -38,5 +38,5 @@ func main() {
 
 	// Start the Server
 	logger.Info(fmt.Sprintf("Starting server on port %s", cfg.Port))
-	log.Fatal(server.ListenAndServe())
+	log.Fatal(server.ListenAndServeTLS("server.crt", "server.key"))
 }
