@@ -1,0 +1,19 @@
+version: '3'
+
+tasks:
+  run:
+    desc: Run the API Server
+    cmds:
+      - go run ./cmd/api/main.go
+
+  test:
+    desc: Run all Go Tests
+    cmds:
+      - go test -v ./...
+
+  build:
+    desc: Build the binary
+    cmds:
+      - mkdir -p bin
+      - go build -o bin/shiftplanner ./cmd/api/main.go
+  
