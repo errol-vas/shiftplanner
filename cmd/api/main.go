@@ -27,6 +27,7 @@ func main() {
 
 	// API Routes
 	http.HandleFunc("/api/health", handlers.HealthCheck)
+	http.HandleFunc("/api/version", handlers.Version(&cfg))
 
 	server := &http.Server{
 		Addr:         ":" + cfg.Port,
