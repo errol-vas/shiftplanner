@@ -14,6 +14,7 @@ import (
 	"github.com/errol-vas/shiftplanner/internal/config"
 	"github.com/errol-vas/shiftplanner/internal/handlers"
 	"github.com/errol-vas/shiftplanner/internal/logger"
+	"github.com/errol-vas/shiftplanner/internal/middleware"
 )
 
 func main() {
@@ -29,13 +30,14 @@ func main() {
 	// Set server to healthy
 	atomic.StoreInt32(&handlers.Health, 1)
 
+	mux := http.NewServeMux()
 	// API Routes
-	http.HandleFunc("/api/health", handlers.HealthCheck)
-	http.HandleFunc("/api/version", handlers.Version(&cfg))
+	mux.HandleFunc("/api/health", handlers.HealthCheck)
+	mux.HandleFunc("/api/version", handlers.Version(&cfg))
 
 	server := &http.Server{
 		Addr:         ":" + cfg.Port,
-		Handler:      nil,
+		Handler:      middleware.Logging(mux),
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
 		IdleTimeout:  120 * time.Second,
@@ -46,7 +48,7 @@ func main() {
 		logger.Info(fmt.Sprintf("Starting server on port %s", cfg.Port))
 		err := server.ListenAndServeTLS("server.crt", "server.key")
 		if err != nil && err != http.ErrServerClosed {
-			log.Fatalf("HTTP Server error: $s", err)
+			log.Fatalf("HTTP Server error: %s", err)
 		}
 	}()
 
