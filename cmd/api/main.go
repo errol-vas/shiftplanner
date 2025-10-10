@@ -31,13 +31,14 @@ func main() {
 	atomic.StoreInt32(&handlers.Health, 1)
 
 	mux := http.NewServeMux()
+
 	// API Routes
 	mux.HandleFunc("/api/health", handlers.HealthCheck)
 	mux.HandleFunc("/api/version", handlers.Version(&cfg))
 
 	server := &http.Server{
 		Addr:         ":" + cfg.Port,
-		Handler:      middleware.Logging(mux),
+		Handler:      middleware.RequestID(middleware.Logging(mux)),
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
 		IdleTimeout:  120 * time.Second,
