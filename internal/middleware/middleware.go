@@ -17,8 +17,11 @@ func Logging(next http.Handler) http.Handler {
 
 		duration := time.Since(start)
 
+		reqID := GetRequestID(r.Context())
+
 		logger.Info(
-			r.Method + " " + r.URL.Path +
+			"[RequestID: " + reqID + "] " +
+				r.Method + " " + r.URL.Path +
 				" - Status: " + http.StatusText(rw.statusCode) +
 				" (" + duration.String() + ")",
 		)
